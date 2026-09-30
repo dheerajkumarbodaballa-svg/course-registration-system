@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registration System | Oracle DBMS Project</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">CRS</div>
+                <div class="logo-text">
+                    <h2>CourseReg</h2>
+                    <span class="badge-oracle">Oracle 23ai</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="dashboard">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="nav-item" data-view="students">
+                    <span class="icon">🎓</span> Students
+                </button>
+                <button class="nav-item" data-view="departments">
+                    <span class="icon">🏛️</span> Departments
+                </button>
+                <button class="nav-item" data-view="instructors">
+                    <span class="icon">👨‍🏫</span> Instructors
+                </button>
+                <button class="nav-item" data-view="courses">
+                    <span class="icon">📚</span> Courses
+                </button>
+                <button class="nav-item" data-view="sections">
+                    <span class="icon">🗓️</span> Course Sections
+                </button>
+                <button class="nav-item" data-view="registrations">
+                    <span class="icon">📝</span> Registrations
+                </button>
+                <button class="nav-item" data-view="reports">
+                    <span class="icon">📈</span> Academic Reports
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p class="project-tag">B.Tech CSE DBMS Project</p>
+                <p class="db-status"><span class="status-dot"></span> Connected: FREEPDB1</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title">System Dashboard</h1>
+                    <p id="page-subtitle">Academic Overview & Operational Metrics</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="btn-refresh">🔄 Refresh Data</button>
+                </div>
+            </header>
+
+            <!-- Notification Toast Container -->
+            <div id="toast-container" class="toast-container"></div>
+
+            <!-- View: Dashboard -->
+            <section id="view-dashboard" class="content-view active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-blue">🎓</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Students</span>
+                            <h3 class="stat-value" id="stat-students">--</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-purple">🏛️</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Departments</span>
+                            <h3 class="stat-value" id="stat-departments">--</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-amber">👨‍🏫</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Instructors</span>
+                            <h3 class="stat-value" id="stat-instructors">--</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-teal">📚</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Courses</span>
+                            <h3 class="stat-value" id="stat-courses">--</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-indigo">🗓️</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Course Sections</span>
+                            <h3 class="stat-value" id="stat-sections">--</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-emerald">📝</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Registrations</span>
+                            <h3 class="stat-value" id="stat-registrations">--</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-secondary-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Section Capacity Highlights</h3>
+                            <button class="btn btn-sm btn-link" onclick="app.switchView('sections')">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Section</th>
+                                            <th>Course</th>
+                                            <th>Term</th>
+                                            <th>Capacity</th>
+                                            <th>Enrolled</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-sections-table">
+                                        <tr><td colspan="6" class="text-center">Loading section data...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="card-body quick-actions">
+                            <button class="btn btn-primary btn-block" onclick="app.openModal('modal-registration')">
+                                ➕ New Student Registration
+                            </button>
+                            <button class="btn btn-secondary btn-block" onclick="app.openModal('modal-student')">
+                                🎓 Register New Student
+                            </button>
+                            <button class="btn btn-secondary btn-block" onclick="app.openModal('modal-section')">
+                                🗓️ Schedule New Section
+                            </button>
+                            <button class="btn btn-secondary btn-block" onclick="app.switchView('reports')">
+                                📈 Open Analytical Reports
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Students -->
+            <section id="view-students" class="content-view">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="search-students" placeholder="Search by name, email, or department...">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.openStudentModal()">➕ Add Student</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>DOB</th>
+                                        <th>Department</th>
+                                        <th>Registrations</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body">
+                                    <tr><td colspan="8" class="text-center">Loading students...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Departments -->
+            <section id="view-departments" class="content-view">
+                <div class="toolbar">
+                    <div></div>
+                    <button class="btn btn-primary" onclick="app.openDepartmentModal()">➕ Add Department</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Department Name</th>
+                                        <th>Description</th>
+                                        <th>Students</th>
+                                        <th>Faculty</th>
+                                        <th>Courses</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="departments-table-body">
+                                    <tr><td colspan="7" class="text-center">Loading departments...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Instructors -->
+            <section id="view-instructors" class="content-view">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="search-instructors" placeholder="Search instructors...">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.openInstructorModal()">➕ Add Instructor</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Instructor Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Department</th>
+                                        <th>Sections Taught</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="instructors-table-body">
+                                    <tr><td colspan="7" class="text-center">Loading instructors...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Courses -->
+            <section id="view-courses" class="content-view">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="search-courses" placeholder="Search courses...">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.openCourseModal()">➕ Add Course</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Course Name</th>
+                                        <th>Credits</th>
+                                        <th>Department</th>
+                                        <th>Sections</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="courses-table-body">
+                                    <tr><td colspan="6" class="text-center">Loading courses...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Course Sections -->
+            <section id="view-sections" class="content-view">
+                <div class="toolbar">
+                    <div></div>
+                    <button class="btn btn-primary" onclick="app.openSectionModal()">➕ Schedule Section</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sec ID</th>
+                                        <th>Course Name</th>
+                                        <th>Credits</th>
+                                        <th>Instructor</th>
+                                        <th>Term / Year</th>
+                                        <th>Room</th>
+                                        <th>Capacity</th>
+                                        <th>Enrolled</th>
+                                        <th>Available</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sections-table-body">
+                                    <tr><td colspan="11" class="text-center">Loading course sections...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Registrations -->
+            <section id="view-registrations" class="content-view">
+                <div class="toolbar">
+                    <div></div>
+                    <button class="btn btn-primary" onclick="app.openRegistrationModal()">📝 Register Student</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reg ID</th>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Instructor</th>
+                                        <th>Term</th>
+                                        <th>Reg Date</th>
+                                        <th>Status</th>
+                                        <th>Grade</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="registrations-table-body">
+                                    <tr><td colspan="9" class="text-center">Loading registrations...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Reports -->
+            <section id="view-reports" class="content-view">
+                <div class="card report-selector-card">
+                    <div class="card-body">
+                        <label for="report-select" class="form-label font-bold">Select Academic Report:</label>
+                        <select id="report-select" class="form-control">
+                            <option value="students-departments">1. Students and their Departments</option>
+                            <option value="courses-departments">2. Courses and their Departments</option>
+                            <option value="courses-instructors">3. Course Sections with Assigned Instructors</option>
+                            <option value="students-in-courses">4. Students Registered in Courses</option>
+                            <option value="section-occupancy">5. Section Occupancy & Available Seats (Capacity Report)</option>
+                            <option value="students-multiple-courses">6. Students Registered for Multiple Courses (HAVING > 1)</option>
+                            <option value="courses-no-registrations">7. Courses with No Registrations (HAVING = 0)</option>
+                            <option value="instructors-multiple-sections">8. Instructors Teaching Multiple Sections</option>
+                            <option value="stats-by-department">9. Registration Statistics by Department</option>
+                            <option value="stats-by-semester">10. Registration Statistics by Semester</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 id="report-title">Report Results</h3>
+                        <span class="badge" id="report-row-count">0 rows</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="report-table">
+                                <thead id="report-table-head"></thead>
+                                <tbody id="report-table-body">
+                                    <tr><td class="text-center">Select a report above to view details.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: Student Form -->
+    <div id="modal-student" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="student-modal-title">Add New Student</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-student')">&times;</button>
+            </div>
+            <form id="form-student" onsubmit="app.handleStudentSubmit(event)">
+                <input type="hidden" id="student-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="student-name" class="form-control" required placeholder="e.g. Rahul Verma">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" id="student-email" class="form-control" required placeholder="e.g. rahul.verma@student.ac.in">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" id="student-phone" class="form-control" placeholder="e.g. +91 97011 22331">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth *</label>
+                        <input type="date" id="student-dob" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department *</label>
+                        <select id="student-department" class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-student')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="student-submit-btn">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Department Form -->
+    <div id="modal-department" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="department-modal-title">Add New Department</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-department')">&times;</button>
+            </div>
+            <form id="form-department" onsubmit="app.handleDepartmentSubmit(event)">
+                <input type="hidden" id="department-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Department Name *</label>
+                        <input type="text" id="department-name" class="form-control" required placeholder="e.g. Computer Science and Engineering">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="department-description" class="form-control" rows="3" placeholder="Department overview..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-department')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Department</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Instructor Form -->
+    <div id="modal-instructor" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="instructor-modal-title">Add New Instructor</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-instructor')">&times;</button>
+            </div>
+            <form id="form-instructor" onsubmit="app.handleInstructorSubmit(event)">
+                <input type="hidden" id="instructor-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Instructor Name *</label>
+                        <input type="text" id="instructor-name" class="form-control" required placeholder="e.g. Dr. Rajesh Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" id="instructor-email" class="form-control" required placeholder="e.g. rajesh.sharma@aditya.ac.in">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="text" id="instructor-phone" class="form-control" placeholder="e.g. +91 98480 12341">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department *</label>
+                        <select id="instructor-department" class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-instructor')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Instructor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Course Form -->
+    <div id="modal-course" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="course-modal-title">Add New Course</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-course')">&times;</button>
+            </div>
+            <form id="form-course" onsubmit="app.handleCourseSubmit(event)">
+                <input type="hidden" id="course-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Course Title *</label>
+                        <input type="text" id="course-name" class="form-control" required placeholder="e.g. Database Management Systems">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Credits *</label>
+                        <input type="number" id="course-credits" class="form-control" required min="1" max="10" value="4">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department *</label>
+                        <select id="course-department" class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-course')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Course Section Form -->
+    <div id="modal-section" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="section-modal-title">Schedule New Course Section</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-section')">&times;</button>
+            </div>
+            <form id="form-section" onsubmit="app.handleSectionSubmit(event)">
+                <input type="hidden" id="section-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Course *</label>
+                        <select id="section-course" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instructor *</label>
+                        <select id="section-instructor" class="form-control" required></select>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Semester *</label>
+                            <select id="section-semester" class="form-control" required>
+                                <option value="Fall">Fall</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Summer">Summer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Academic Year *</label>
+                            <input type="text" id="section-year" class="form-control" required placeholder="2025-2026" value="2025-2026">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Classroom / Venue *</label>
+                            <input type="text" id="section-room" class="form-control" required placeholder="e.g. LH-101">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Maximum Capacity *</label>
+                            <input type="number" id="section-capacity" class="form-control" required min="1" value="30">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-section')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Registration Form -->
+    <div id="modal-registration" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Register Student for Course Section</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-registration')">&times;</button>
+            </div>
+            <form id="form-registration" onsubmit="app.handleRegistrationSubmit(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Select Student *</label>
+                        <select id="reg-student" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select Course Section *</label>
+                        <select id="reg-section" class="form-control" required onchange="app.onSectionSelectChange(this.value)"></select>
+                        <small id="reg-section-info" class="form-hint"></small>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Enrollment Status</label>
+                            <select id="reg-status" class="form-control">
+                                <option value="REGISTERED">REGISTERED</option>
+                                <option value="DROPPED">DROPPED</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Grade (Optional)</label>
+                            <select id="reg-grade" class="form-control">
+                                <option value="">In Progress (None)</option>
+                                <option value="A+">A+</option>
+                                <option value="A">A</option>
+                                <option value="B+">B+</option>
+                                <option value="B">B</option>
+                                <option value="C+">C+</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-registration')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Complete Registration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Edit Registration Form -->
+    <div id="modal-edit-registration" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Update Registration Status & Grade</h3>
+                <button class="modal-close" onclick="app.closeModal('modal-edit-registration')">&times;</button>
+            </div>
+            <form id="form-edit-registration" onsubmit="app.handleEditRegistrationSubmit(event)">
+                <input type="hidden" id="edit-reg-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Student</label>
+                        <input type="text" id="edit-reg-student" class="form-control" readonly disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Course Section</label>
+                        <input type="text" id="edit-reg-course" class="form-control" readonly disabled>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Status *</label>
+                            <select id="edit-reg-status" class="form-control" required>
+                                <option value="REGISTERED">REGISTERED</option>
+                                <option value="DROPPED">DROPPED</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Grade</label>
+                            <select id="edit-reg-grade" class="form-control">
+                                <option value="">In Progress (None)</option>
+                                <option value="A+">A+</option>
+                                <option value="A">A</option>
+                                <option value="B+">B+</option>
+                                <option value="B">B</option>
+                                <option value="C+">C+</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-edit-registration')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Registration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

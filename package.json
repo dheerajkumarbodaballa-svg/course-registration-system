@@ -1,0 +1,25 @@
+{
+  "name": "course-registration-system",
+  "version": "1.0.0",
+  "description": "Academic DBMS Project - Course Registration System using Oracle Database 23ai and Node.js/Express",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "test": "node backend/server.js --test"
+  },
+  "keywords": [
+    "dbms",
+    "oracle-database",
+    "sqlplus",
+    "express",
+    "course-registration"
+  ],
+  "author": "B.Tech CSE Student",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "oracledb": "^6.7.1"
+  }
+}
