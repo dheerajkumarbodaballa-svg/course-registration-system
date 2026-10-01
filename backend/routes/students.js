@@ -89,7 +89,7 @@ router.post('/', async (req, res) => {
     try {
         const sql = `
             INSERT INTO Student (Student_Name, Email, Phone, Date_of_Birth, Department_ID)
-            VALUES (:name, :email, :phone, TO_DATE(:dob, 'YYYY-MM-DD'), :dept_id)
+            VALUES (:name, :email, :phone, :dob::date, :dept_id)
         `;
         await db.execute(sql, {
             name: name.trim(),
@@ -127,7 +127,7 @@ router.put('/:id', async (req, res) => {
             SET Student_Name = :name,
                 Email = :email,
                 Phone = :phone,
-                Date_of_Birth = TO_DATE(:dob, 'YYYY-MM-DD'),
+                Date_of_Birth = :dob::date,
                 Department_ID = :dept_id
             WHERE Student_ID = :id
         `;

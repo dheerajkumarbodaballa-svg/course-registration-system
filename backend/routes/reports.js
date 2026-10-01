@@ -56,11 +56,12 @@ router.get('/courses-instructors', async (req, res) => {
     }
 });
 
-// 4. Students registered in each course
+// 4. Students registered in each course (NVL -> COALESCE for PostgreSQL)
 router.get('/students-in-courses', async (req, res) => {
     try {
         const sql = `
-            SELECT s.Student_Name, s.Email, c.Course_Name, cs.Semester, cs.Academic_Year, r.Status, NVL(r.Grade, 'In Progress') AS Grade
+            SELECT s.Student_Name, s.Email, c.Course_Name, cs.Semester, cs.Academic_Year, r.Status,
+                   COALESCE(r.Grade, 'In Progress') AS Grade
             FROM Registration r
             JOIN Student s ON r.Student_ID = s.Student_ID
             JOIN Course_Section cs ON r.Section_ID = cs.Section_ID

@@ -120,7 +120,7 @@ router.post('/', async (req, res) => {
                 WHERE Section_ID = :section_id AND Status = 'REGISTERED'
             `;
             const countResult = await db.execute(countSql, { section_id: Number(section_id) });
-            const activeCount = countResult.rows[0].ACTIVE_COUNT;
+            const activeCount = Number(countResult.rows[0].ACTIVE_COUNT);
 
             if (activeCount >= capacity) {
                 return res.status(400).json({
@@ -130,10 +130,10 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // Step 4: Insert Registration
+        // Step 4: Insert Registration (CURRENT_DATE replaces Oracle SYSDATE)
         const insertSql = `
             INSERT INTO Registration (Student_ID, Section_ID, Registration_Date, Status, Grade)
-            VALUES (:student_id, :section_id, SYSDATE, :status, :grade)
+            VALUES (:student_id, :section_id, CURRENT_DATE, :status, :grade)
         `;
         await db.execute(insertSql, {
             student_id: Number(student_id),

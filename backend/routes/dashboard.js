@@ -20,7 +20,6 @@ router.get('/stats', async (req, res) => {
                 (SELECT COUNT(*) FROM Registration WHERE Status = 'REGISTERED') AS active_registrations,
                 (SELECT COUNT(*) FROM Registration WHERE Status = 'COMPLETED') AS completed_registrations,
                 (SELECT COUNT(*) FROM Registration WHERE Status = 'DROPPED') AS dropped_registrations
-            FROM dual
         `;
 
         const result = await db.execute(statsQuery);
