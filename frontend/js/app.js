@@ -241,9 +241,9 @@ const app = {
                 return;
             }
 
-            tbody.innerHTML = res.data.map(s => `
+            tbody.innerHTML = res.data.map((s, index) => `
                 <tr>
-                    <td>${s.STUDENT_ID}</td>
+                    <td>${index + 1}</td>
                     <td><strong>${s.STUDENT_NAME}</strong></td>
                     <td>${s.EMAIL}</td>
                     <td>${s.PHONE || '--'}</td>
