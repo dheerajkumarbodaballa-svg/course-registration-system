@@ -263,6 +263,9 @@ const app = {
 
     async openStudentModal(student = null) {
         await this.refreshLookups();
+        if (!student) {
+            document.getElementById('form-student').reset();
+        }
         const select = document.getElementById('student-department');
         select.innerHTML = this.departmentsCache.map(d => `
             <option value="${d.DEPARTMENT_ID}">${d.DEPARTMENT_NAME}</option>
@@ -278,7 +281,6 @@ const app = {
             select.value = student.DEPARTMENT_ID;
         } else {
             document.getElementById('student-modal-title').textContent = 'Add New Student';
-            document.getElementById('form-student').reset();
             document.getElementById('student-id').value = '';
         }
         this.openModal('modal-student');
@@ -453,6 +455,9 @@ const app = {
 
     async openInstructorModal(inst = null) {
         await this.refreshLookups();
+        if (!inst) {
+            document.getElementById('form-instructor').reset();
+        }
         const select = document.getElementById('instructor-department');
         select.innerHTML = this.departmentsCache.map(d => `
             <option value="${d.DEPARTMENT_ID}">${d.DEPARTMENT_NAME}</option>
@@ -467,7 +472,6 @@ const app = {
             select.value = inst.DEPARTMENT_ID;
         } else {
             document.getElementById('instructor-modal-title').textContent = 'Add New Instructor';
-            document.getElementById('form-instructor').reset();
             document.getElementById('instructor-id').value = '';
         }
         this.openModal('modal-instructor');
@@ -551,6 +555,9 @@ const app = {
 
     async openCourseModal(course = null) {
         await this.refreshLookups();
+        if (!course) {
+            document.getElementById('form-course').reset();
+        }
         const select = document.getElementById('course-department');
         select.innerHTML = this.departmentsCache.map(d => `
             <option value="${d.DEPARTMENT_ID}">${d.DEPARTMENT_NAME}</option>
@@ -564,7 +571,6 @@ const app = {
             select.value = course.DEPARTMENT_ID;
         } else {
             document.getElementById('course-modal-title').textContent = 'Add New Course';
-            document.getElementById('form-course').reset();
             document.getElementById('course-id').value = '';
         }
         this.openModal('modal-course');
@@ -656,6 +662,9 @@ const app = {
 
     async openSectionModal(section = null) {
         await this.refreshLookups();
+        if (!section) {
+            document.getElementById('form-section').reset();
+        }
         const courseSelect = document.getElementById('section-course');
         const instSelect = document.getElementById('section-instructor');
 
@@ -678,7 +687,6 @@ const app = {
             document.getElementById('section-capacity').value = section.CAPACITY;
         } else {
             document.getElementById('section-modal-title').textContent = 'Schedule New Section';
-            document.getElementById('form-section').reset();
             document.getElementById('section-id').value = '';
             document.getElementById('section-year').value = '2025-2026';
             document.getElementById('section-capacity').value = '30';
@@ -771,6 +779,8 @@ const app = {
 
     async openRegistrationModal() {
         await this.refreshLookups();
+        document.getElementById('form-registration').reset();
+
         const studentRes = await api.getStudents();
         const students = studentRes.data || [];
 
@@ -794,7 +804,6 @@ const app = {
             this.onSectionSelectChange(sections[0].SECTION_ID);
         }
 
-        document.getElementById('form-registration').reset();
         document.getElementById('reg-status').value = 'REGISTERED';
         this.openModal('modal-registration');
     },
