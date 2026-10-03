@@ -29,7 +29,7 @@ const app = {
 
         document.getElementById('btn-refresh').addEventListener('click', () => {
             this.refreshCurrentView();
-            this.showToast('Data refreshed from Oracle Database', 'info');
+            this.showToast('Data refreshed from PostgreSQL', 'info');
         });
     },
 
@@ -895,7 +895,7 @@ const app = {
         const tbody = document.getElementById('report-table-body');
         const rowCount = document.getElementById('report-row-count');
 
-        tbody.innerHTML = `<tr><td class="text-center">Loading report data from Oracle...</td></tr>`;
+        tbody.innerHTML = `<tr><td class="text-center">Loading report data from PostgreSQL...</td></tr>`;
 
         try {
             const res = await api.getReport(reportKey);
